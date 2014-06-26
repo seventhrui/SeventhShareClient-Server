@@ -12,7 +12,7 @@
     
     <!-- Login -->
     <string name="text_share_hint">我要分享...</string>
-    <string name="text_login_usernum">账号</string>
+    <string name="text_login_usernum">用户名</string>
     <string name="text_login_hint_usernum">邮箱/手机号</string>
     <string name="text_login_userpswd">密码</string>
     <string name="text_login_hint_userpswd">密码</string>
@@ -20,7 +20,13 @@
     <string name="text_login_login">登录</string>
     <string name="text_login_undo">取消</string>
     <string name="text_login_register">我没有账号,我注册</string>
-    
+    <!-- Register -->
+    <string name="text_register_register">注册</string>
+    <string name="text_register_pass_confirm">确定密码</string>
+    <string name="text_email">电子邮箱</string>
+    <string name="text_phone">电话</string>
+    <string name="text_qq">QQ</string>
+    <string name="text_register_login">我有账号,我登录</string>
     
     <string name="share_qqzone">QQ空间</string>
     <string name="share_tcweibo">腾讯微博</string>

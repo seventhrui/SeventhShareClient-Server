@@ -49,8 +49,8 @@ public class Fragment_Login extends Fragment {
 	private String customerpass = "";
 	private Thread threadlogin = null;
 
-	private UserFunctions userFunction=null;
-	private CustomerInfoBean customer=null;
+	private UserFunctions userFunction = null;
+	private CustomerInfoBean customer = null;
 	// JSON Response node names
 	private JSONObject json = null;
 	private static String KEY_SUCCESS = "success";
@@ -124,19 +124,22 @@ public class Fragment_Login extends Fragment {
 		public void onClick(View v) {
 			switch (v.getId()) {
 			case R.id.btn_login_submit:
-				handler_login.sendEmptyMessage(HandlerCode.LOGIN_CUSTOMER_BEGIN);
+				handler_login
+						.sendEmptyMessage(HandlerCode.LOGIN_CUSTOMER_BEGIN);
 				break;
 			case R.id.btn_login_undo:
 				handler_login.sendEmptyMessage(HandlerCode.LOGIN_CUSTOMER_UNDO);
 				break;
 			case R.id.btn_login_register:
+				gotoPage("register");
 				break;
 			}
 		}
 	}
-	
+
 	/**
 	 * Login Function
+	 * 
 	 * @return login result
 	 */
 	private String loginStart() {
@@ -145,16 +148,17 @@ public class Fragment_Login extends Fragment {
 		customerpass = et_login_userpswd.getText().toString().trim();
 		if (TextUtils.isEmpty(customername) || TextUtils.isEmpty(customerpass)) {
 			Toast.makeText(getActivity(), "帐码或密码不能为空", 0).show();
-		} else if(!CheckNetworkStateUtil.checkNet(context)){
+		} else if (!CheckNetworkStateUtil.checkNet(context)) {
 			Toast.makeText(getActivity(), "请检查网络连接", 0).show();
-		} else{
+		} else {
 			btn_login_submit.setVisibility(View.GONE);
 			btn_login_undo.setVisibility(View.VISIBLE);
-			threadlogin=new Thread(loginThread);
+			threadlogin = new Thread(loginThread);
 			threadlogin.start();
 		}
 		return loginresult;
 	}
+
 	/**
 	 * Login Thread
 	 */
@@ -167,9 +171,11 @@ public class Fragment_Login extends Fragment {
 				if (json.getString(KEY_SUCCESS) != null) {
 					String res = json.getString(KEY_SUCCESS);
 					if (Integer.parseInt(res) == 1) {
-						handler_login.sendEmptyMessage(HandlerCode.LOGIN_CUSTOMER_SUCCESS);
+						handler_login
+								.sendEmptyMessage(HandlerCode.LOGIN_CUSTOMER_SUCCESS);
 					} else {
-						handler_login.sendEmptyMessage(HandlerCode.LOGIN_CUSTOMER_FAILURE);
+						handler_login
+								.sendEmptyMessage(HandlerCode.LOGIN_CUSTOMER_FAILURE);
 					}
 				}
 			} catch (JSONException e) {
@@ -177,14 +183,16 @@ public class Fragment_Login extends Fragment {
 			}
 		}
 	};
-	private void saveData(){
+
+	private void saveData() {
 		new Thread(saveThread).start();
 	}
+
 	/**
 	 * Save Thread
 	 */
-	private Runnable saveThread = new Runnable(){
-		public void run(){
+	private Runnable saveThread = new Runnable() {
+		public void run() {
 			try {
 				if (cb_login_rememberpswd.isChecked()) {
 					Editor editor = MainActivity.sp.edit();
@@ -204,9 +212,14 @@ public class Fragment_Login extends Fragment {
 				Log.v("---KEY_UID--->", json_user.getString(KEY_UID) + " 3");
 				Log.v("---KEY_PHONE--->", json_user.getString(KEY_PHONE) + " 4");
 				Log.v("---KEY_QQ--->", json_user.getString(KEY_QQ) + " 5");
-				Log.v("---KEY_UPTIME--->", json_user.getString(KEY_UPTIME)	+ " 6");
-				
-				customer=new CustomerInfoBean(json_user.getString(KEY_UID), json_user.getString(KEY_NAME), json_user.getString(KEY_PHONE), json_user.getString(KEY_EMAIL), json_user.getString(KEY_QQ));
+				Log.v("---KEY_UPTIME--->", json_user.getString(KEY_UPTIME)
+						+ " 6");
+
+				customer = new CustomerInfoBean(json_user.getString(KEY_UID),
+						json_user.getString(KEY_NAME),
+						json_user.getString(KEY_PHONE),
+						json_user.getString(KEY_EMAIL),
+						json_user.getString(KEY_QQ));
 
 				db.addUser(json_user.getString(KEY_NAME),
 						json_user.getString(KEY_EMAIL),
@@ -217,20 +230,23 @@ public class Fragment_Login extends Fragment {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			handler_login.sendEmptyMessage(HandlerCode.LOGIN_CUSTOMER_SAVEDATAED);
+			handler_login
+					.sendEmptyMessage(HandlerCode.LOGIN_CUSTOMER_SAVEDATAED);
 		}
 	};
+
 	/**
 	 * Login Cancel
 	 */
-	private void loginStop(){
+	private void loginStop() {
 		Thread.interrupted();
-		Log.v("---线程状态--->", threadlogin.isInterrupted()+"");
-		if(!threadlogin.isInterrupted()){
+		Log.v("---线程状态--->", threadlogin.isInterrupted() + "");
+		if (!threadlogin.isInterrupted()) {
 			btn_login_submit.setVisibility(View.VISIBLE);
 			btn_login_undo.setVisibility(View.GONE);
 		}
 	}
+
 	/**
 	 * Login Error
 	 */
@@ -239,19 +255,28 @@ public class Fragment_Login extends Fragment {
 		btn_login_submit.setVisibility(View.VISIBLE);
 		btn_login_undo.setVisibility(View.GONE);
 	}
+
 	/**
-	 * Goto  Fragment_lv
+	 * Goto Fragment_lv
 	 */
-	private void gotoPage() {
-		Fragment fragment=new Fragment_lv_Blog(context);
+	private void gotoPage(String tag) {
+		Fragment fragment = null;
 		FragmentManager fragmentManager = getFragmentManager();
-		Bundle bundle=new Bundle();
-		bundle.putString("customerid", customer.getC_id());
-		fragment.setArguments(bundle);
+		String planet="";
+		if (tag.equals("register")) {
+			fragment = new Fragment_Register(context);
+			planet="注册";
+		}else{
+			fragment = new Fragment_lv_Blog(context);
+			Bundle bundle = new Bundle();
+			bundle.putString("customerid", customer.getC_id());
+			fragment.setArguments(bundle);
+			planet="登录";
+		}
 		fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
-		String planet = getResources().getStringArray(R.array.planets_array)[0];
 		getActivity().setTitle(planet);
 	}
+
 	private Handler handler_login = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -270,7 +295,7 @@ public class Fragment_Login extends Fragment {
 				loginError();
 				break;
 			case HandlerCode.LOGIN_CUSTOMER_SAVEDATAED:
-				gotoPage();
+				gotoPage("login");
 				break;
 			}
 		}
