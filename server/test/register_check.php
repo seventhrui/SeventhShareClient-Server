@@ -1,5 +1,5 @@
 <?php
-if (isset ( $_POST ["Submit"] ) && $_POST ["Submit"] == "зЂВс") {
+if (isset ( $_POST ["submit"] ) && $_POST ["submit"] == "Register") {
 	$name = $_POST ["username"];
 	$password = $_POST ["password"];
 	$psw_confirm = $_POST ["confirm"];

@@ -85,6 +85,27 @@ if (isset ( $_POST ['tag'] ) && $_POST ['tag'] != '') {
 				echo json_encode ( $response );
 			}
 		}
+	} else if ($tag == 'publish') {
+		$title = $_POST ['title'];
+		$content = $_POST ['content'];
+		$customerid = $_POST ['customerid'];
+		//$customerid = 5;
+		$blog = $db->storeBlog ( $customerid, $title, $content );
+		if ($blog) {
+			$response ["success"] = 1;
+			$response ["id"] = $blog ["id"];
+			$response ["blog"] ["customerid"] = $blog ["customerid"];
+			$response ["blog"] ["title"] = $blog ["title"];
+			$response ["blog"] ["content"] = $blog ["content"];
+			$response ["blog"] ["commentcount"] = $blog ["commentcount"];
+			$response ["blog"] ["uptime"] = $blog ["uptime"];
+			echo json_encode ( $response );
+		} else {
+			// user failed to store
+			$response ["error"] = 1;
+			$response ["error_msg"] = "Error occured in Publish";
+			echo json_encode ( $response );
+		}
 	} else {
 		echo "Invalid Request";
 	}

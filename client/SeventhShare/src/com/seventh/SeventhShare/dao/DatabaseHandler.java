@@ -1,4 +1,4 @@
-package com.seventh.SeventhShare;
+package com.seventh.SeventhShare.dao;
 
 import java.util.HashMap;
 

@@ -46,7 +46,7 @@ public class ListViewItemAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (convertView == null) {
 			convertView = layoutInflater.inflate(
-					R.layout.item_listview, null);
+					R.layout.item_listview_blog, null);
 		}
 		TextView tv_itemtext = (TextView) convertView
 				.findViewById(R.id.tv_lv_ItemText);

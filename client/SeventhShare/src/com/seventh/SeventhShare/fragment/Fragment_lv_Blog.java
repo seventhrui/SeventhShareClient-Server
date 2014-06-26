@@ -3,18 +3,21 @@ package com.seventh.SeventhShare.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.seventh.SeventhShare.HandlerCode;
 import com.seventh.SeventhShare.R;
 import com.seventh.SeventhShare.adapter.ListViewItemAdapter;
+import com.seventh.SeventhShare.httpclient.BlogFunctions;
+import com.seventh.SeventhShare.util.CheckNetworkStateUtil;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Vibrator;
+import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -35,14 +38,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v4.widget.SwipeRefreshLayout;
 
-public class Fragment_lv extends Fragment implements OnClickListener,SensorEventListener{
+public class Fragment_lv_Blog extends Fragment implements OnClickListener{
 	private Context context;
 	private View rootView = null;
 	private ListView lv_funs;
 	private SwipeRefreshLayout swipeLayout;
 	private EditText txtNew;
 	
-	private String content="";
+	private String blogcontent="";
+	
+	private String customerid="";
 	
 	private Button mBtnSend;//
 	private TextView mBtnRcd;//
@@ -52,26 +57,21 @@ public class Fragment_lv extends Fragment implements OnClickListener,SensorEvent
 	
 	private List<String> lsitem;
 	
-	//定义sensor管理器
-	private SensorManager mSensorManager;
-	//震动
-	private Vibrator vibrator;
-	private static final int SENSOR_SHAKE = 10;
-
-	
-	
-	public Fragment_lv(Context c) {
+	public Fragment_lv_Blog(Context c) {
 		this.context = c;
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		if(this.getArguments() != null){
+			customerid=this.getArguments().get("customerid").toString().trim();
+		}
 		initView(inflater, container);
 		return rootView;
 	}
 	private void initView(LayoutInflater i, ViewGroup c){
-		rootView = i.inflate(R.layout.fragment_listview_page, c, false);
+		rootView = i.inflate(R.layout.fragment_listview_blog, c, false);
 		lv_funs = (ListView) rootView.findViewById(R.id.lv_funs);
 		ListViewItemAdapter lvadapter = getListViewAdapter(context);
 		lv_funs.setAdapter(lvadapter);
@@ -117,6 +117,7 @@ public class Fragment_lv extends Fragment implements OnClickListener,SensorEvent
 		for(int i=0;i<strs.length;i++){
 			lsitem.add(strs[i]);
 		}
+		
 		ListViewItemAdapter lvia=new ListViewItemAdapter(context,lsitem);
 		return lvia;
 		
@@ -164,9 +165,12 @@ public class Fragment_lv extends Fragment implements OnClickListener,SensorEvent
 							.getContext().getSystemService(
 									Context.INPUT_METHOD_SERVICE);
 					if (imm.isActive()) {
-						content = txtNew.getText().toString().trim();
-						if (content.length() > 1) {
-							lsitem.add(content);
+						if (blogcontent.length() > 1) {
+							if(!customerid.equals("")){
+								//lsitem.add(customerid+"id");///////////////////////////
+								handler_blog.sendEmptyMessage(HandlerCode.BLOG_PUBLISH_BEGIN);
+							}
+							//lsitem.add(content);
 							txtNew.setText("");
 						}
 					}
@@ -182,9 +186,10 @@ public class Fragment_lv extends Fragment implements OnClickListener,SensorEvent
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_send:
-			content = txtNew.getText().toString().trim();
+			handler_blog.sendEmptyMessage(HandlerCode.BLOG_PUBLISH_BEGIN);
+			/*content = txtNew.getText().toString().trim();
 			lsitem.add(content);
-			txtNew.setText("");
+			txtNew.setText("");*/
 			break;
 		case R.id.ivPopUp:
 			if (btn_vocie) {
@@ -202,16 +207,73 @@ public class Fragment_lv extends Fragment implements OnClickListener,SensorEvent
 			break;
 		}
 	}
-
-	@Override
-	public void onAccuracyChanged(Sensor sensor, int accuracy) {
+	
+	/**
+	 * Login Function
+	 * @return login result
+	 */
+	private void publishBlogStart() {
+		String blogtitle = txtNew.getText().toString().trim();
+		String blogcontent = txtNew.getText().toString().trim();
+		if (TextUtils.isEmpty(blogtitle) || TextUtils.isEmpty(blogcontent)) {
+			Toast.makeText(getActivity(), "帐码或密码不能为空", Toast.LENGTH_SHORT).show();
+		} else if(!CheckNetworkStateUtil.checkNet(context)){
+			Toast.makeText(getActivity(), "请检查网络连接", Toast.LENGTH_SHORT).show();
+		} else{
+			Thread threadlogin=new Thread(blogPublishThread);
+			threadlogin.start();
+		}
+	}
+	/**
+	 * Login Thread
+	 */
+	private Runnable blogPublishThread = new Runnable() {
+		public void run() {
+			BlogFunctions blogFunction = new BlogFunctions();
+			blogcontent = txtNew.getText().toString().trim();
+			JSONObject json = blogFunction.publishBlog(customerid, blogcontent, blogcontent);
+			// Check Login
+			try {
+				if (json.getString("success") != null) {
+					String res = json.getString("success");
+					if (Integer.parseInt(res) == 1) {
+						handler_blog.sendEmptyMessage(HandlerCode.BLOG_PUBLISH_SUCCESS);
+					} else {
+						handler_blog.sendEmptyMessage(HandlerCode.BLOG_PUBLISH_FAILURE);
+					}
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+	};
+	protected void publishBlogError() {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public void onSensorChanged(SensorEvent event) {
+	protected void publishBlogStop() {
 		// TODO Auto-generated method stub
 		
 	}
+	private Handler handler_blog = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			int whatVal = msg.what;
+			switch (whatVal) {
+			case HandlerCode.BLOG_PUBLISH_BEGIN:
+				publishBlogStart();
+				break;
+			case HandlerCode.BLOG_PUBLISH_UNDO:
+				publishBlogStop();
+				break;
+			case HandlerCode.BLOG_PUBLISH_SUCCESS:
+				Log.e("---success--->", "success");
+				break;
+			case HandlerCode.BLOG_PUBLISH_FAILURE:
+				publishBlogError();
+				break;
+			}
+		}
+	};
 }

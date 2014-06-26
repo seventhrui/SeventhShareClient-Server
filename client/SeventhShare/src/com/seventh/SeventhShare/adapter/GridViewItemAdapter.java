@@ -42,7 +42,7 @@ public class GridViewItemAdapter extends BaseAdapter {
 		ViewHolder holder = null;
 		if (convertView == null) {
 			holder = new ViewHolder();
-			convertView = layoutInflater.inflate(R.layout.item_gridview, null);
+			convertView = layoutInflater.inflate(R.layout.item_gridview_share, null);
 			holder.iv1=(ImageView) convertView.findViewById(R.id.ItemImage);
 			holder.iv2=(ImageView) convertView.findViewById(R.id.ItemSelected);
 			holder.tv=(TextView) convertView.findViewById(R.id.ItemText);

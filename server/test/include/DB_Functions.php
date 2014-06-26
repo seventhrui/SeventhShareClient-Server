@@ -91,7 +91,19 @@ class DB_Functions {
         $hash = base64_encode(sha1($password . $salt, true) . $salt);
         return $hash;
     }
-
+	
+    public function storeBlog($customerid, $title, $content){
+    	$uptime = date('Y-m-d H:i:s');
+    	$result = mysql_query("INSERT INTO blog( customerid, title, content, uptime) VALUES( '$customerid', '$title', '$content', '$uptime')");
+    	
+    	if ($result) {
+    		$cid = mysql_insert_id();
+    		$result = mysql_query("SELECT * FROM blog WHERE id = $cid");
+    		return mysql_fetch_array($result);
+    	} else {
+    		return false;
+    	}
+    }
 }
 
 ?>

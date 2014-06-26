@@ -1,4 +1,4 @@
-package com.seventh.SeventhShare;
+package com.seventh.SeventhShare.httpclient;
 
 import java.io.BufferedReader;
 import java.io.IOException;

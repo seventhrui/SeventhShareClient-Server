@@ -88,11 +88,11 @@ public final class R {
         public static final int activity_main=0x7f030000;
         public static final int activity_sharkitoff=0x7f030001;
         public static final int drawer_list_item=0x7f030002;
-        public static final int fragment_gridview_page=0x7f030003;
-        public static final int fragment_listview_page=0x7f030004;
+        public static final int fragment_gridview_share=0x7f030003;
+        public static final int fragment_listview_blog=0x7f030004;
         public static final int fragment_login_page=0x7f030005;
-        public static final int item_gridview=0x7f030006;
-        public static final int item_listview=0x7f030007;
+        public static final int item_gridview_share=0x7f030006;
+        public static final int item_listview_blog=0x7f030007;
     }
     public static final class menu {
         public static final int main=0x7f080000;

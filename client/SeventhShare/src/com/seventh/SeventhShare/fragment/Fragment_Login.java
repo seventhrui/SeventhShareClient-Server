@@ -3,11 +3,12 @@ package com.seventh.SeventhShare.fragment;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.seventh.SeventhShare.DatabaseHandler;
 import com.seventh.SeventhShare.HandlerCode;
 import com.seventh.SeventhShare.R;
-import com.seventh.SeventhShare.UserFunctions;
 import com.seventh.SeventhShare.activity.MainActivity;
+import com.seventh.SeventhShare.bean.CustomerInfoBean;
+import com.seventh.SeventhShare.dao.DatabaseHandler;
+import com.seventh.SeventhShare.httpclient.UserFunctions;
 import com.seventh.SeventhShare.util.CheckNetworkStateUtil;
 
 import android.app.Fragment;
@@ -49,6 +50,7 @@ public class Fragment_Login extends Fragment {
 	private Thread threadlogin = null;
 
 	private UserFunctions userFunction=null;
+	private CustomerInfoBean customer=null;
 	// JSON Response node names
 	private JSONObject json = null;
 	private static String KEY_SUCCESS = "success";
@@ -123,7 +125,6 @@ public class Fragment_Login extends Fragment {
 			switch (v.getId()) {
 			case R.id.btn_login_submit:
 				handler_login.sendEmptyMessage(HandlerCode.LOGIN_CUSTOMER_BEGIN);
-				// login();
 				break;
 			case R.id.btn_login_undo:
 				handler_login.sendEmptyMessage(HandlerCode.LOGIN_CUSTOMER_UNDO);
@@ -190,7 +191,7 @@ public class Fragment_Login extends Fragment {
 					editor.putString("Customer_name", customername);
 					editor.putString("Customer_pass", customerpass);
 					editor.commit();
-					Toast.makeText(context, "密码已保存", 0).show();
+					Toast.makeText(context, "密码已保存", Toast.LENGTH_SHORT).show();
 				}
 				// Save Customer to SQLite
 				DatabaseHandler db = new DatabaseHandler(context);
@@ -203,8 +204,9 @@ public class Fragment_Login extends Fragment {
 				Log.v("---KEY_UID--->", json_user.getString(KEY_UID) + " 3");
 				Log.v("---KEY_PHONE--->", json_user.getString(KEY_PHONE) + " 4");
 				Log.v("---KEY_QQ--->", json_user.getString(KEY_QQ) + " 5");
-				Log.v("---KEY_UPTIME--->", json_user.getString(KEY_UPTIME)
-						+ " 6");
+				Log.v("---KEY_UPTIME--->", json_user.getString(KEY_UPTIME)	+ " 6");
+				
+				customer=new CustomerInfoBean(json_user.getString(KEY_UID), json_user.getString(KEY_NAME), json_user.getString(KEY_PHONE), json_user.getString(KEY_EMAIL), json_user.getString(KEY_QQ));
 
 				db.addUser(json_user.getString(KEY_NAME),
 						json_user.getString(KEY_EMAIL),
@@ -241,8 +243,11 @@ public class Fragment_Login extends Fragment {
 	 * Goto  Fragment_lv
 	 */
 	private void gotoPage() {
-		Fragment fragment=new Fragment_lv(context);
+		Fragment fragment=new Fragment_lv_Blog(context);
 		FragmentManager fragmentManager = getFragmentManager();
+		Bundle bundle=new Bundle();
+		bundle.putString("customerid", customer.getC_id());
+		fragment.setArguments(bundle);
 		fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
 		String planet = getResources().getStringArray(R.array.planets_array)[0];
 		getActivity().setTitle(planet);

@@ -1,4 +1,4 @@
-package com.seventh.SeventhShare;
+package com.seventh.SeventhShare.httpclient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,8 +7,9 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
+import com.seventh.SeventhShare.dao.DatabaseHandler;
+
 import android.content.Context;
-import android.util.Log;
 
 public class UserFunctions {
 	

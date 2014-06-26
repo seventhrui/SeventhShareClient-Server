@@ -34,10 +34,10 @@ public class Fragment_Main extends Fragment {
 		Fragment fragment=null;
 		switch (num){
 		case 0:
-			fragment=new Fragment_lv(getActivity().getApplicationContext());
+			fragment=new Fragment_lv_Blog(getActivity().getApplicationContext());
 			break;
 		case 1:
-			fragment=new Fragment_gv(getActivity().getApplicationContext());
+			fragment=new Fragment_gv_Share(getActivity().getApplicationContext());
 			break;
 		case 2:
 			fragment=new Fragment_Login(getActivity().getApplicationContext());

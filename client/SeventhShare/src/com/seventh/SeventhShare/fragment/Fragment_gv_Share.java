@@ -28,7 +28,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class Fragment_gv extends Fragment {
+public class Fragment_gv_Share extends Fragment {
 	private Context context;
 	private View rootView = null;
 	private GridView gv_funs;
@@ -40,7 +40,7 @@ public class Fragment_gv extends Fragment {
 	private static List<GridViewItemBean> gviblist;
 	private GridViewItemAdapter gviadapter;
 	
-	public Fragment_gv(Context c) {
+	public Fragment_gv_Share(Context c) {
 		this.context=c;
 	}
 
@@ -53,7 +53,7 @@ public class Fragment_gv extends Fragment {
 	}
 
 	private void initView(LayoutInflater i, ViewGroup c) {
-		rootView = i.inflate(R.layout.fragment_gridview_page, c, false);
+		rootView = i.inflate(R.layout.fragment_gridview_share, c, false);
 		gv_funs = (GridView) rootView.findViewById(R.id.gv_funs);
 		gviadapter=getGridViewAdapter(context);
 		Log.v("---context--->", context+"");
