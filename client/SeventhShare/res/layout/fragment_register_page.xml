@@ -98,11 +98,12 @@
             android:id="@+id/et_register_qq"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/text_qq" />
+            android:hint="@string/text_qq" 
+            android:inputType="number"/>
         
         <!-- error message -->
         <TextView
-            android:id="@+id/tv_login_error"
+            android:id="@+id/tv_register_error"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"

@@ -24,13 +24,13 @@ class DB_Functions {
      * @param unknown $qq
      * @return multitype:|boolean
      */
-    public function storeUser($name, $password, $phone, $email, $qq) {
+    public function storeUser($name, $password, $email, $phone, $qq) {
         $uuid = uniqid('', true);
         $hash = $this->hashSSHA($password);
         $encrypted_password = $hash["encrypted"]; // encrypted password
         $salt = $hash["salt"]; // salt
         $uptime = date('Y-m-d H:i:s');
-        $result = mysql_query("INSERT INTO customer( name, pass, phone, email, qq, salt) VALUES( '$name', '$encrypted_password', '$phone', '$email', '$qq', '$salt')");
+        $result = mysql_query("INSERT INTO customer( name, pass, email, phone, qq, salt) VALUES( '$name', '$encrypted_password', '$email', '$phone', '$qq', '$salt')");
         
         if ($result) {
             $uid = mysql_insert_id();

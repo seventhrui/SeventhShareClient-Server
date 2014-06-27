@@ -26,6 +26,19 @@ public class HandlerCode {
 	 */
 	public final static int LOGIN_CUSTOMER_SAVEDATAED = 24;
 	
+	/**
+	 * 客户注册开始
+	 */
+	public final static int REGISTER_CUSTOMER_BEGIN = 31;
+	/**
+	 * 客户注册成功
+	 */
+	public final static int REGISTER_CUSTOMER_SUCCESS = 32;
+	/**
+	 * 客户注册失败
+	 */
+	public final static int REGISTER_CUSTOMER_FAILURE = 33;
+	
 	/**************************发表或评论博客**************************/
 	/**
 	 * 发表Blog

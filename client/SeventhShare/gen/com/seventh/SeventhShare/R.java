@@ -52,21 +52,21 @@ public final class R {
         public static final int voice_rcd_btn_pressed=0x7f020019;
     }
     public static final class id {
-        public static final int ItemImage=0x7f09001e;
-        public static final int ItemSelected=0x7f09001f;
-        public static final int ItemText=0x7f090020;
-        public static final int action_about=0x7f090024;
-        public static final int action_exit=0x7f090025;
-        public static final int action_settings=0x7f090023;
-        public static final int action_shark=0x7f090026;
-        public static final int action_websearch=0x7f090022;
+        public static final int ItemImage=0x7f09001f;
+        public static final int ItemSelected=0x7f090020;
+        public static final int ItemText=0x7f090021;
+        public static final int action_about=0x7f090025;
+        public static final int action_exit=0x7f090026;
+        public static final int action_settings=0x7f090024;
+        public static final int action_shark=0x7f090027;
+        public static final int action_websearch=0x7f090023;
         public static final int btn_bottom=0x7f09000b;
         public static final int btn_login_register=0x7f090015;
         public static final int btn_login_submit=0x7f090013;
         public static final int btn_login_undo=0x7f090014;
         public static final int btn_rcd=0x7f09000e;
-        public static final int btn_register_login=0x7f09001d;
-        public static final int btn_register_submit=0x7f09001c;
+        public static final int btn_register_login=0x7f09001e;
+        public static final int btn_register_submit=0x7f09001d;
         public static final int btn_send=0x7f09000c;
         public static final int cb_login_rememberpswd=0x7f090011;
         public static final int clear=0x7f090003;
@@ -89,7 +89,8 @@ public final class R {
         public static final int rl_bottom=0x7f090009;
         public static final int swipe_container=0x7f090007;
         public static final int tv_login_error=0x7f090012;
-        public static final int tv_lv_ItemText=0x7f090021;
+        public static final int tv_lv_ItemText=0x7f090022;
+        public static final int tv_register_error=0x7f09001c;
         public static final int txtNew=0x7f09000d;
     }
     public static final class layout {

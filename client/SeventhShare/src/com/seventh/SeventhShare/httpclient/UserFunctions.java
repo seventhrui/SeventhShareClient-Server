@@ -49,13 +49,15 @@ public class UserFunctions {
 	 * @param email
 	 * @param password
 	 * */
-	public JSONObject registerUser(String name, String email, String password){
+	public JSONObject registerUser(String name, String password, String email, String phone, String qq){
 		// Building Parameters
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("tag", register_tag));
 		params.add(new BasicNameValuePair("name", name));
+		params.add(new BasicNameValuePair("pass", password));
 		params.add(new BasicNameValuePair("email", email));
-		params.add(new BasicNameValuePair("password", password));
+		params.add(new BasicNameValuePair("phone", phone));
+		params.add(new BasicNameValuePair("qq", qq));
 		
 		// getting JSON Object
 		JSONObject json = jsonParser.getJSONFromUrl(registerURL, params);

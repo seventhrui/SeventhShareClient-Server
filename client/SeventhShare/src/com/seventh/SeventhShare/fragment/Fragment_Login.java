@@ -70,7 +70,9 @@ public class Fragment_Login extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-
+		if(this.getArguments() != null){
+			customername=this.getArguments().get("customername").toString().trim();
+		}
 		initView(inflater, container);
 		initListener();
 		return rootView;
@@ -85,24 +87,22 @@ public class Fragment_Login extends Fragment {
 	private void initView(LayoutInflater i, ViewGroup c) {
 		rootView = i.inflate(R.layout.fragment_login_page, c, false);
 
-		et_login_usernum = (EditText) rootView
-				.findViewById(R.id.et_login_usernum);
-		et_login_userpswd = (EditText) rootView
-				.findViewById(R.id.et_login_userpswd);
+		et_login_usernum = (EditText) rootView.findViewById(R.id.et_login_usernum);
+		et_login_userpswd = (EditText) rootView.findViewById(R.id.et_login_userpswd);
+		if("".equals(customername)){
+			et_login_usernum.setText(MainActivity.sp.getString("Customer_name", ""));
+			et_login_userpswd.setText(MainActivity.sp.getString("Customer_pass", ""));
+		}else{
+			et_login_usernum.setText(customername);
+		}
 
-		et_login_usernum
-				.setText(MainActivity.sp.getString("Customer_name", ""));
-		et_login_userpswd.setText(MainActivity.sp
-				.getString("Customer_pass", ""));
-
-		cb_login_rememberpswd = (CheckBox) rootView
-				.findViewById(R.id.cb_login_rememberpswd);
+		cb_login_rememberpswd = (CheckBox) rootView.findViewById(R.id.cb_login_rememberpswd);
+		
 		tv_login_error = (TextView) rootView.findViewById(R.id.tv_login_error);
-		btn_login_submit = (Button) rootView
-				.findViewById(R.id.btn_login_submit);
+		
+		btn_login_submit = (Button) rootView.findViewById(R.id.btn_login_submit);
 		btn_login_undo = (Button) rootView.findViewById(R.id.btn_login_undo);
-		btn_login_register = (Button) rootView
-				.findViewById(R.id.btn_login_register);
+		btn_login_register = (Button) rootView.findViewById(R.id.btn_login_register);
 	}
 
 	/**
@@ -124,8 +124,7 @@ public class Fragment_Login extends Fragment {
 		public void onClick(View v) {
 			switch (v.getId()) {
 			case R.id.btn_login_submit:
-				handler_login
-						.sendEmptyMessage(HandlerCode.LOGIN_CUSTOMER_BEGIN);
+				handler_login.sendEmptyMessage(HandlerCode.LOGIN_CUSTOMER_BEGIN);
 				break;
 			case R.id.btn_login_undo:
 				handler_login.sendEmptyMessage(HandlerCode.LOGIN_CUSTOMER_UNDO);
@@ -147,9 +146,9 @@ public class Fragment_Login extends Fragment {
 		customername = et_login_usernum.getText().toString().trim();
 		customerpass = et_login_userpswd.getText().toString().trim();
 		if (TextUtils.isEmpty(customername) || TextUtils.isEmpty(customerpass)) {
-			Toast.makeText(getActivity(), "帐码或密码不能为空", 0).show();
+			Toast.makeText(context, "帐码或密码不能为空", Toast.LENGTH_SHORT).show();
 		} else if (!CheckNetworkStateUtil.checkNet(context)) {
-			Toast.makeText(getActivity(), "请检查网络连接", 0).show();
+			Toast.makeText(context, "请检查网络连接", Toast.LENGTH_SHORT).show();
 		} else {
 			btn_login_submit.setVisibility(View.GONE);
 			btn_login_undo.setVisibility(View.VISIBLE);

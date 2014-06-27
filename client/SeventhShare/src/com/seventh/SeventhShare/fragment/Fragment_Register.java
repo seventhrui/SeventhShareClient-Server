@@ -37,20 +37,29 @@ import android.widget.Toast;
 public class Fragment_Register extends Fragment {
 	private Context context;
 	private View rootView = null;
-	private EditText et_login_usernum;
-	private EditText et_login_userpswd;
-	private CheckBox cb_login_rememberpswd;
-	private TextView tv_login_error;
-	private Button btn_login_submit;
-	private Button btn_login_undo;
-	private Button btn_login_register;
+	
+	private EditText et_register_name;//username
+	private EditText et_register_pass;//user password
+	private EditText et_register_passconfirm;//user password confirm
+	private EditText et_register_email;//user email
+	private EditText et_register_phone;//user phone
+	private EditText et_register_qq;//user qq
+	private TextView tv_register_error;
+	
+	private Button btn_register_submit;
+	private Button btn_register_login;
 
 	private String customername = "";
 	private String customerpass = "";
-	private Thread threadlogin = null;
+	private String passconfirm = "";
+	private String customeremail = "";
+	private String customerphone = "";
+	private String customerqq = "";
+	private Thread threadregister = null;
 
 	private UserFunctions userFunction=null;
 	private CustomerInfoBean customer=null;
+	
 	// JSON Response node names
 	private JSONObject json = null;
 	private static String KEY_SUCCESS = "success";
@@ -84,66 +93,80 @@ public class Fragment_Register extends Fragment {
 	 */
 	private void initView(LayoutInflater i, ViewGroup c) {
 		rootView = i.inflate(R.layout.fragment_register_page, c, false);
-
+		
+		et_register_name = (EditText) rootView.findViewById(R.id.et_register_name); 
+		et_register_pass = (EditText) rootView.findViewById(R.id.et_register_pass);
+		et_register_passconfirm = (EditText) rootView.findViewById(R.id.et_register_passconfirm);
+		et_register_email = (EditText) rootView.findViewById(R.id.et_register_email);
+		et_register_phone = (EditText) rootView.findViewById(R.id.et_register_phone);
+		et_register_qq = (EditText) rootView.findViewById(R.id.et_register_qq);
+		tv_register_error = (TextView) rootView.findViewById(R.id.tv_register_error);
+		
+		btn_register_submit = (Button) rootView.findViewById(R.id.btn_register_submit);
+		btn_register_login = (Button) rootView.findViewById(R.id.btn_register_login);
 	}
 
 	/**
 	 * Initialize the Listener
 	 */
 	private void initListener() {
-		LoginOnclickListener loll = new LoginOnclickListener();
-		btn_login_submit.setOnClickListener(loll);
-		btn_login_undo.setOnClickListener(loll);
-		btn_login_register.setOnClickListener(loll);
+		RegisterOnclickListener roll = new RegisterOnclickListener();
+		btn_register_submit.setOnClickListener(roll);
+		btn_register_login.setOnClickListener(roll);
 	}
 
 	/**
 	 * OnclickListener
 	 * 
 	 */
-	class LoginOnclickListener implements OnClickListener {
+	class RegisterOnclickListener implements OnClickListener {
 		@Override
 		public void onClick(View v) {
 			switch (v.getId()) {
-			case R.id.btn_login_submit:
+			case R.id.btn_register_submit:
 				handler_login.sendEmptyMessage(HandlerCode.LOGIN_CUSTOMER_BEGIN);
 				break;
-			case R.id.btn_login_undo:
-				handler_login.sendEmptyMessage(HandlerCode.LOGIN_CUSTOMER_UNDO);
-				break;
-			case R.id.btn_login_register:
+			case R.id.btn_register_login:
 				break;
 			}
 		}
 	}
 	
 	/**
-	 * Login Function
+	 * Register Function
 	 * @return login result
 	 */
-	private String loginStart() {
+	private String registerStart() {
 		String loginresult = "";
-		customername = et_login_usernum.getText().toString().trim();
-		customerpass = et_login_userpswd.getText().toString().trim();
+		
+		customername = et_register_name.getText().toString().trim();
+		customerpass = et_register_pass.getText().toString().trim();
+		passconfirm = et_register_passconfirm.getText().toString().trim();
+		customeremail = et_register_email.getText().toString().trim();
+		customerphone = et_register_phone.getText().toString().trim();
+		customerqq = et_register_qq.getText().toString().trim();
+		
 		if (TextUtils.isEmpty(customername) || TextUtils.isEmpty(customerpass)) {
-			Toast.makeText(getActivity(), "帐码或密码不能为空", 0).show();
+			Toast.makeText(getActivity(), "帐码或密码不能为空", Toast.LENGTH_SHORT).show();
+		} else if(!customerpass.equals(passconfirm)){
+			Toast.makeText(context, "两次密码不一致", Toast.LENGTH_SHORT).show();
+		} else if(TextUtils.isEmpty(customeremail) && TextUtils.isEmpty(customerphone) && TextUtils.isEmpty(customerqq)){
+			Toast.makeText(context, "邮箱/电话/QQ不能全为空", Toast.LENGTH_SHORT).show();
 		} else if(!CheckNetworkStateUtil.checkNet(context)){
-			Toast.makeText(getActivity(), "请检查网络连接", 0).show();
+			Toast.makeText(context, "请检查网络连接", Toast.LENGTH_SHORT).show();
 		} else{
-			btn_login_submit.setVisibility(View.GONE);
-			btn_login_undo.setVisibility(View.VISIBLE);
-			threadlogin=new Thread(loginThread);
-			threadlogin.start();
+			threadregister=new Thread(registerThread);
+			threadregister.start();
 		}
 		return loginresult;
 	}
 	/**
 	 * Login Thread
 	 */
-	private Runnable loginThread = new Runnable() {
+	private Runnable registerThread = new Runnable() {
 		public void run() {
 			userFunction = new UserFunctions();
-			json = userFunction.loginUser(customername, customerpass);
+			json = userFunction.registerUser(customername, customerpass, customeremail, customerphone, customerqq);
 			// Check Login
 			try {
 				if (json.getString(KEY_SUCCESS) != null) {
@@ -159,79 +182,24 @@ public class Fragment_Register extends Fragment {
 			}
 		}
 	};
-	private void saveData(){
-		new Thread(saveThread).start();
-	}
-	/**
-	 * Save Thread
-	 */
-	private Runnable saveThread = new Runnable(){
-		public void run(){
-			try {
-				if (cb_login_rememberpswd.isChecked()) {
-					Editor editor = MainActivity.sp.edit();
-					editor.putString("Customer_name", customername);
-					editor.putString("Customer_pass", customerpass);
-					editor.commit();
-					Toast.makeText(context, "密码已保存", Toast.LENGTH_SHORT).show();
-				}
-				// Save Customer to SQLite
-				DatabaseHandler db = new DatabaseHandler(context);
-				JSONObject json_user = json.getJSONObject("customer");
-				Log.v("---json_user--->", json_user.toString());
 
-				userFunction.logoutUser(context);
-				Log.v("---KEY_NAME--->", json_user.getString(KEY_NAME) + " 1");
-				Log.v("---KEY_EMAIL--->", json_user.getString(KEY_EMAIL) + " 2");
-				Log.v("---KEY_UID--->", json_user.getString(KEY_UID) + " 3");
-				Log.v("---KEY_PHONE--->", json_user.getString(KEY_PHONE) + " 4");
-				Log.v("---KEY_QQ--->", json_user.getString(KEY_QQ) + " 5");
-				Log.v("---KEY_UPTIME--->", json_user.getString(KEY_UPTIME)	+ " 6");
-				
-				customer=new CustomerInfoBean(json_user.getString(KEY_UID), json_user.getString(KEY_NAME), json_user.getString(KEY_PHONE), json_user.getString(KEY_EMAIL), json_user.getString(KEY_QQ));
-
-				db.addUser(json_user.getString(KEY_NAME),
-						json_user.getString(KEY_EMAIL),
-						json_user.getString(KEY_UID),
-						json_user.getString(KEY_PHONE),
-						json_user.getString(KEY_QQ),
-						json_user.getString(KEY_UPTIME));
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			handler_login.sendEmptyMessage(HandlerCode.LOGIN_CUSTOMER_SAVEDATAED);
-		}
-	};
-	/**
-	 * Login Cancel
-	 */
-	private void loginStop(){
-		Thread.interrupted();
-		Log.v("---线程状态--->", threadlogin.isInterrupted()+"");
-		if(!threadlogin.isInterrupted()){
-			btn_login_submit.setVisibility(View.VISIBLE);
-			btn_login_undo.setVisibility(View.GONE);
-		}
-	}
 	/**
 	 * Login Error
 	 */
-	private void loginError() {
-		tv_login_error.setText("用户名或密码错误");
-		btn_login_submit.setVisibility(View.VISIBLE);
-		btn_login_undo.setVisibility(View.GONE);
+	private void registerError() {
+		tv_register_error.setText("注册失败");
 	}
 	/**
 	 * Goto  Fragment_lv
 	 */
 	private void gotoPage() {
-		Fragment fragment=new Fragment_lv_Blog(context);
+		Fragment fragment=new Fragment_Login(context);
 		FragmentManager fragmentManager = getFragmentManager();
 		Bundle bundle=new Bundle();
-		bundle.putString("customerid", customer.getC_id());
+		bundle.putString("customername", customername);
 		fragment.setArguments(bundle);
 		fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
-		String planet = getResources().getStringArray(R.array.planets_array)[0];
+		String planet = "登录";
 		getActivity().setTitle(planet);
 	}
 	private Handler handler_login = new Handler() {
@@ -240,19 +208,14 @@ public class Fragment_Register extends Fragment {
 			int whatVal = msg.what;
 			switch (whatVal) {
 			case HandlerCode.LOGIN_CUSTOMER_BEGIN:
-				loginStart();
-				break;
-			case HandlerCode.LOGIN_CUSTOMER_UNDO:
-				loginStop();
+				registerStart();
 				break;
 			case HandlerCode.LOGIN_CUSTOMER_SUCCESS:
-				saveData();
+				Toast.makeText(context, "注册成功", Toast.LENGTH_SHORT).show();
+				gotoPage();
 				break;
 			case HandlerCode.LOGIN_CUSTOMER_FAILURE:
-				loginError();
-				break;
-			case HandlerCode.LOGIN_CUSTOMER_SAVEDATAED:
-				gotoPage();
+				registerError();
 				break;
 			}
 		}

@@ -67,7 +67,7 @@ if (isset ( $_POST ['tag'] ) && $_POST ['tag'] != '') {
 			echo json_encode ( $response );
 		} else {
 			// store user
-			$user = $db->storeUser ( $name, $password, $email, $phone, $qq );
+			$user = $db->storeUser ( $name, $pass, $email, $phone, $qq );
 			if ($user) {
 				// user stored successfully
 				$response ["success"] = 1;
