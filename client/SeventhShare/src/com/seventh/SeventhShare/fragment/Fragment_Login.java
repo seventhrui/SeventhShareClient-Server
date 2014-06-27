@@ -54,8 +54,6 @@ public class Fragment_Login extends Fragment {
 	// JSON Response node names
 	private JSONObject json = null;
 	private static String KEY_SUCCESS = "success";
-	private static String KEY_ERROR = "error";
-	private static String KEY_ERROR_MSG = "error_msg";
 	private static String KEY_UID = "id";
 	private static String KEY_NAME = "name";
 	private static String KEY_EMAIL = "email";
@@ -201,31 +199,19 @@ public class Fragment_Login extends Fragment {
 					Toast.makeText(context, "密码已保存", Toast.LENGTH_SHORT).show();
 				}
 				// Save Customer to SQLite
-				DatabaseHandler db = new DatabaseHandler(context);
+				DatabaseHandler dbh = new DatabaseHandler(context);
 				JSONObject json_user = json.getJSONObject("customer");
 				Log.v("---json_user--->", json_user.toString());
 
 				userFunction.logoutUser(context);
-				Log.v("---KEY_NAME--->", json_user.getString(KEY_NAME) + " 1");
-				Log.v("---KEY_EMAIL--->", json_user.getString(KEY_EMAIL) + " 2");
-				Log.v("---KEY_UID--->", json_user.getString(KEY_UID) + " 3");
-				Log.v("---KEY_PHONE--->", json_user.getString(KEY_PHONE) + " 4");
-				Log.v("---KEY_QQ--->", json_user.getString(KEY_QQ) + " 5");
-				Log.v("---KEY_UPTIME--->", json_user.getString(KEY_UPTIME)
-						+ " 6");
 
 				customer = new CustomerInfoBean(json_user.getString(KEY_UID),
 						json_user.getString(KEY_NAME),
 						json_user.getString(KEY_PHONE),
 						json_user.getString(KEY_EMAIL),
-						json_user.getString(KEY_QQ));
-
-				db.addUser(json_user.getString(KEY_NAME),
-						json_user.getString(KEY_EMAIL),
-						json_user.getString(KEY_UID),
-						json_user.getString(KEY_PHONE),
 						json_user.getString(KEY_QQ),
 						json_user.getString(KEY_UPTIME));
+				dbh.addUser(customer);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}

@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 
 import com.seventh.SeventhShare.R;
 import com.seventh.SeventhShare.fragment.Fragment_Main;
+import com.seventh.SeventhShare.httpclient.UserFunctions;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -38,6 +39,8 @@ public class MainActivity extends Activity {
 	private CharSequence mTitle;
 	private String[] mPlanetTitles;
 	
+	private String customerid="";
+	
 	/**
 	 * save customer name and password
 	 */
@@ -50,12 +53,12 @@ public class MainActivity extends Activity {
 		sp = getSharedPreferences("config", MODE_PRIVATE);
 		this.getIntent().setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);  
 		
+		customerid=getIntent().getStringExtra("customerid");
 		
 		if (android.os.Build.VERSION.SDK_INT > 9) {
 		    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 		    StrictMode.setThreadPolicy(policy);
 		}
-		
 		
 		initView();
 		getOverflowMenu();
@@ -200,6 +203,7 @@ public class MainActivity extends Activity {
 		case R.id.action_about:
 			break;
 		case R.id.action_exit:
+			new Thread(logoutThread).start();
 			this.finish();
 			break;
 		case R.id.action_shark:
@@ -209,4 +213,10 @@ public class MainActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	private Runnable logoutThread = new Runnable() {
+		public void run() {
+			UserFunctions userFunction = new UserFunctions();
+			userFunction.logoutUser(getApplicationContext());
+		}
+	};
 }

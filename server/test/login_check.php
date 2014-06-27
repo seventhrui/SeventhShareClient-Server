@@ -12,6 +12,7 @@ if (isset ( $_POST ["submit"] ) && $_POST ["submit"] == "Login") {
 		if ($user) {
 			//header ( "Location: message.php" );
 			echo "<script>alert('登录成功！');history.go(-1);</script>";
+			header("Location: blog.php");
 		} else {
 			echo "<script>alert('用户名或密码不正确！');history.go(-1);</script>";
 		} 

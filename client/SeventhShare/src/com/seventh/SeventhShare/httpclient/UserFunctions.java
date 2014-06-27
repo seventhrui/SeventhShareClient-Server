@@ -42,7 +42,6 @@ public class UserFunctions {
 		params.add(new BasicNameValuePair("password", password));
 		return jsonParser.getJSONFromUrl(loginURL, params);
 	}
-	
 	/**
 	 * 注册请求
 	 * @param name

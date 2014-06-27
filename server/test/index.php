@@ -106,6 +106,17 @@ if (isset ( $_POST ['tag'] ) && $_POST ['tag'] != '') {
 			$response ["error_msg"] = "Error occured in Publish";
 			echo json_encode ( $response );
 		}
+	} else if($tag == 'getblogs'){
+		$customerid = $_POST ['customerid'];
+		$blog = $db->getBlogsByCustomerID($customerid);
+		if($blog){
+			echo $blog;
+		} else {
+			// user failed to store
+			$response ["error"] = 1;
+			$response ["error_msg"] = "Error occured in Get Blogs";
+			echo json_encode ( $response );
+		}
 	} else {
 		echo "Invalid Request";
 	}

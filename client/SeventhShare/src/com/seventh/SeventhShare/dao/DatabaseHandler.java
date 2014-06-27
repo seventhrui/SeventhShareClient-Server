@@ -2,6 +2,8 @@ package com.seventh.SeventhShare.dao;
 
 import java.util.HashMap;
 
+import com.seventh.SeventhShare.bean.CustomerInfoBean;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -72,6 +74,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_PHONE, phone);
 		values.put(KEY_QQ, qq);
 		values.put(KEY_UPTIME, uptime); // Created At
+
+		// Inserting Row
+		db.insert(TABLE_LOGIN, null, values);
+		db.close(); // Closing database connection
+	}
+	
+	/**
+	 * Storing user details in database
+	 * */
+	public void addUser(CustomerInfoBean cib) {
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		ContentValues values = new ContentValues();
+		values.put(KEY_NAME, cib.getC_name()); // Name
+		values.put(KEY_EMAIL, cib.getC_email()); // Email
+		values.put(KEY_UID, cib.getC_id()); // uid
+		values.put(KEY_PHONE, cib.getC_phone());
+		values.put(KEY_QQ, cib.getC_qq());
+		values.put(KEY_UPTIME, cib.getC_uptime()); // Created At
 
 		// Inserting Row
 		db.insert(TABLE_LOGIN, null, values);
